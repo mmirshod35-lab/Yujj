@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Savol-Javob</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; font-family: Arial, sans-serif;
+      background: #101827; color: #f3f6ff;
+    }
+    .container { max-width: 520px; margin: auto; padding: 20px; }
+    h1 { text-align: center; margin: 8px 0 24px; }
+    .menu { display: flex; gap: 8px; margin-bottom: 18px; }
+    .menu button {
+      flex: 1; padding: 12px 5px; border: 1px solid #34445e;
+      border-radius: 10px; background: #202d42; color: #eaf0ff;
+      font-size: 13px; cursor: pointer;
+    }
+    .menu button.active { background: #2878ff; border-color: #2878ff; color: white; }
+    .box {
+      background: #1a2639; padding: 18px; border-radius: 16px;
+      border: 1px solid #2b3b54;
+    }
+    .section { display: none; }
+    .section.active { display: block; }
+    textarea, input {
+      width: 100%; padding: 13px; margin: 10px 0 14px;
+      border: 1px solid #40516c; border-radius: 10px;
+      background: #101827; color: white; font-size: 16px;
+    }
+    textarea { resize: vertical; }
+    .main-btn {
+      width: 100%; padding: 14px; border: 0; border-radius: 10px;
+      background: #2878ff; color: white; font-size: 16px; font-weight: bold;
+    }
+    .result { margin-top: 14px; padding: 12px; border-radius: 10px; text-align: center; }
+    .correct { background: #174b37; color: #b9ffdb; }
+    .wrong { background: #542b35; color: #ffd1d8; }
+    .muted { color: #b8c5d9; overflow-wrap: anywhere; }
+    .small { color: #9eacc2; font-size: 13px; }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>📝 Savol-Javob</h1>
+  <div class="menu">
+    <button class="active" onclick="showMenu('savol', this)">1. Savol</button>
+    <button onclick="showMenu('javob', this)">2. Javob</button>
+    <button onclick="showMenu('tekshir', this)">3. Tekshirish</button>
+  </div>
+
+  <div class="box">
+    <section id="savol" class="section active">
+      <h2>Savol kiritish</h2>
+      <textarea id="question" rows="5" placeholder="Savolingizni yozing..."></textarea>
+      <button class="main-btn" onclick="saveQuestion()">Savolni saqlash</button>
+    </section>
+
+    <section id="javob" class="section">
+      <h2>Javob kiritish</h2>
+      <p class="small">Bu yerga tekshiriladigan to‘g‘ri javobni kiriting.</p>
+      <input id="answer" type="text" placeholder="To‘g‘ri javob...">
+      <button class="main-btn" onclick="saveAnswer()">Javobni saqlash</button>
+    </section>
+
+    <section id="tekshir" class="section">
+      <h2>Tekshirish</h2>
+      <p><b>Savol:</b></p><p id="showQuestion" class="muted">Hozircha savol kiritilmagan.</p>
+      <p><b>To‘g‘ri javob:</b></p><p id="showAnswer" class="muted">Hozircha javob kiritilmagan.</p>
+      <input id="userAnswer" type="text" placeholder="Javobingizni yozing...">
+      <button class="main-btn" onclick="checkAnswer()">✅ Tekshirish</button>
+      <div id="result" aria-live="polite"></div>
+    </section>
+  </div>
+</div>
+
+<script>
+let savedQuestion = "";
+let savedAnswer = "";
+
+function showMenu(menuId, button) {
+  document.querySelectorAll(".section").forEach(s => s.classList.remove("active"));
+  document.getElementById(menuId).classList.add("active");
+  document.querySelectorAll(".menu button").forEach(b => b.classList.remove("active"));
+  button.classList.add("active");
+}
+
+function saveQuestion() {
+  const value = document.getElementById("question").value.trim();
+  if (!value) { alert("Avval savol kiriting!"); return; }
+  savedQuestion = value;
+  document.getElementById("showQuestion").textContent = savedQuestion;
+  alert("Savol saqlandi!");
+}
+
+function saveAnswer() {
+  const value = document.getElementById("answer").value.trim();
+  if (!value) { alert("To‘g‘ri javobni kiriting!"); return; }
+  savedAnswer = value;
+  document.getElementById("showAnswer").textContent = savedAnswer;
+  alert("To‘g‘ri javob saqlandi!");
+}
+
+function checkAnswer() {
+  const result = document.getElementById("result");
+  const userAnswer = document.getElementById("userAnswer").value.trim();
+  if (!savedQuestion || !savedAnswer) {
+    result.className = "result wrong";
+    result.textContent = "Avval savol va to‘g‘ri javobni saqlang.";
+    return;
+  }
+  if (!userAnswer) {
+    result.className = "result wrong";
+    result.textContent = "Javobingizni yozing.";
+    return;
+  }
+  const normalize = s => s.trim().toLocaleLowerCase("uz-UZ").replace(/\s+/g, " ");
+  if (normalize(userAnswer) === normalize(savedAnswer)) {
+    result.className = "result correct";
+    result.textContent = "To‘g‘ri javob! ✅";
+  } else {
+    result.className = "result wrong";
+    result.textContent = "Noto‘g‘ri. Qayta urinib ko‘ring.";
+  }
+}
+</script>
+</body>
+</html>
